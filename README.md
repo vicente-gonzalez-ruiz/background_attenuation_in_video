@@ -1,1 +1,2 @@
-# background_attenuation_in_video
+# Background attenuation in sequences of images using the optical flow
+
