@@ -13,6 +13,16 @@ def attenuate_background_img(
         iterations=3,
         poly_n=5,
         poly_sigma=1.2):
+  
+    if logger.getEffectiveLevel() <= logging.DEBUG:
+        logging.debug(f"threshold={threshold}")
+        print(f"prev ({prev_img.dtype})")
+        cv2_imshow(prev_img)
+        print(f"next ({next_img.dtype})")
+        cv2_imshow(next_img)
+        print(f"background ({background_img.dtype})")
+        cv2_imshow(background_img)
+
     flow = cv2.calcOpticalFlowFarneback(
         prev=prev_img.astype(np.float32),
         next=next_img.astype(np.float32),
@@ -30,9 +40,14 @@ def attenuate_background_img(
     difference_img = np.clip(difference_img, 0, 255).astype(np.uint8)
     background_img = alpha*background_img + (1 - alpha)*background_pixels
 
-    if __debug__:
-        cv2_imshow(difference_img)
+    if logger.getEffectiveLevel() <= logging.DEBUG:
+        print(f"background_pixels ({background_pixels.dtype})")
+        cv2_imshow(background_pixels)
 
+    if logger.getEffectiveLevel() < logging.WARNING:
+        print(f"attenuated ({difference_img.dtype})")
+        cv2_imshow(difference_img)
+  
     return difference_img, background_img, flow
 
 def attenuate_background_seq(
@@ -48,13 +63,13 @@ def attenuate_background_seq(
         poly_n=5,
         poly_sigma=1.2):
     first_img_path = input_sequence_path + str(first_img_index) + img_extension
-    prev_img = cv2.imread(first_img_path, cv2.IMREAD_UNCHANGED)
+    prev_img = cv2.imread(first_img_path, cv2.IMREAD_UNCHANGED).astype(np.float32)
     assert prev_img is not None, first_img_path
     background_img = np.zeros_like(prev_img) # Ojo
     initial_flow = np.zeros((background_img.shape[0], background_img.shape[1], 2), dtype=np.float32)
-    for i in range(first_img_index, last_img_index):
+    for i in range(first_img_index + 1, last_img_index):
         next_img_path = input_sequence_path + str(i) + img_extension
-        next_img = cv2.imread(next_img_path, cv2.IMREAD_UNCHANGED)
+        next_img = cv2.imread(next_img_path, cv2.IMREAD_UNCHANGED).astype(np.float32)
         assert next_img is not None, next_img_path
         difference_img, background_img, flow = attenuate_background_img(
             prev_img,
@@ -70,14 +85,23 @@ def attenuate_background_seq(
         prev_img = next_img
         initial_flow = flow
 
-        if __debug__:
-          print("background")
-          cv2_imshow(background_img)
-          print("prev")
-          cv2_imshow(prev_img)
-          print("difference")
-          cv2_imshow(difference_img)
-
         difference_img_path = output_sequence_path + str(i) + img_extension
         cv2.imwrite(difference_img_path, difference_img)
 
+    if logger.getEffectiveLevel() < logging.WARNING:
+        print(f"background ({background_img.dtype})")
+        cv2_imshow(background_img)
+
+if __main__:
+    attenuate_background_seq(
+        input_sequence_path="img_paper/Alicia/ImagesGRAYSCALE/",
+        output_sequence_path="/tmp/",
+        img_extension=".jpg",
+        first_img_index=0,
+        last_img_index=120,
+        alpha=0.99,
+        levels=3,
+        winsize=17,
+        iterations=3,
+        poly_n=5,
+        poly_sigma=1.2)
