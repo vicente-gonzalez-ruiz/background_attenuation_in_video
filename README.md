@@ -2,7 +2,9 @@
 
 ## Install
 
+'''
 pip install "video_background_attenuation @ git+https://github.com/vicente-gonzalez-ruiz/video_background_attenuation"
+'''
 
 ## Usage
 
