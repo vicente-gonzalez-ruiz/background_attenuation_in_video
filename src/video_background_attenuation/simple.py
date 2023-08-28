@@ -1,5 +1,17 @@
 import numpy as np
 import cv2
+import logging
+import sys
+IN_COLAB = 'google.colab' in sys.modules
+print(IN_COLAB)
+
+logger = logging.getLogger(__name__)
+#logging.basicConfig(format="[%(filename)s:%(lineno)s %(funcName)s()] %(message)s")
+#logger.setLevel(logging.CRITICAL)
+#logger.setLevel(logging.ERROR)
+#logger.setLevel(logging.WARNING)
+logger.setLevel(logging.INFO)
+#logger.setLevel(logging.DEBUG)
 
 def attenuate_background_img(
         prev_img,
@@ -8,29 +20,32 @@ def attenuate_background_img(
         alpha=0.99,
         threshold=10):
 
-    if logger.getEffectiveLevel() <= logging.DEBUG:
-        logging.debug(f"threshold={threshold}")
-        print(f"prev ({prev_img.dtype})")
-        cv2_imshow(prev_img)
-        print(f"next ({next_img.dtype})")
-        cv2_imshow(next_img)
-        print(f"background ({background_img.dtype})")
-        cv2_imshow(background_img)
+    if IN_COLAB:
+        if logger.getEffectiveLevel() <= logging.DEBUG:
+            logging.debug(f"threshold={threshold}")
+            print(f"prev ({prev_img.dtype})")
+            cv2_imshow(prev_img)
+            print(f"next ({next_img.dtype})")
+            cv2_imshow(next_img)
+            print(f"background ({background_img.dtype})")
+            cv2_imshow(background_img)
 
     difference_img = next_img - background_img
     difference_img = np.clip(difference_img, 0.0, 255.0)
     background_pixels = np.where((difference_img > threshold), prev_img, 0.0)
 
-    if logger.getEffectiveLevel() <= logging.DEBUG:
-        print(f"background_pixels ({background_pixels.dtype})")
-        cv2_imshow(background_pixels)
+    if IN_COLAB:
+        if logger.getEffectiveLevel() <= logging.DEBUG:
+            print(f"background_pixels ({background_pixels.dtype})")
+            cv2_imshow(background_pixels)
 
     background_img = alpha*background_img + (1 - alpha)*background_pixels
     #background_img = next_img
 
-    if logger.getEffectiveLevel() < logging.WARNING:
-        print(f"attenuated ({difference_img.dtype})")
-        cv2_imshow(difference_img)
+    if IN_COLAB:
+        if logger.getEffectiveLevel() < logging.WARNING:
+            print(f"attenuated ({difference_img.dtype})")
+            cv2_imshow(difference_img)
 
     return difference_img, background_img
 
@@ -62,9 +77,10 @@ def attenuate_background_seq(
         difference_img_path = output_sequence_path + str(i) + img_extension
         cv2.imwrite(difference_img_path, difference_img.astype(np.uint8))
 
-    if logger.getEffectiveLevel() < logging.WARNING:
-        print(f"background ({background_img.dtype})")
-        cv2_imshow(background_img)
+    if IN_COLAB:
+        if logger.getEffectiveLevel() < logging.WARNING:
+            print(f"background ({background_img.dtype})")
+            cv2_imshow(background_img)
 
 if __main__:
     attenuate_background_seq(
