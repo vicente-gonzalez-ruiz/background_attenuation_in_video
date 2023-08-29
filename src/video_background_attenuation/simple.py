@@ -18,7 +18,7 @@ try:
     IN_COLAB = True
 except:
     IN_COLAB = False
-logger.info(f"Running in Google Colab: [IN_COLAB]")
+logger.info(f"Running in Google Colab: {IN_COLAB}")
 
 def attenuate_background_img(
         prev_img,
