@@ -12,7 +12,9 @@ logger.setLevel(logging.INFO)
 
 import sys
 IN_COLAB = 'google.colab' in sys.modules
-logger.info(f"Running in Google Colab: {IN_COLAB}")
+if IN_COLAB:
+    from google.colab.patches import cv2_imshow
+    logger.info(f"Running in Google Colab")
 
 def attenuate_background_img(
         prev_img,
