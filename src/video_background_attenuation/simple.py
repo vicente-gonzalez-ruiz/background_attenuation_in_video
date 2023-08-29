@@ -1,10 +1,7 @@
 import numpy as np
 import cv2
-import logging
-import sys
-IN_COLAB = 'google.colab' in sys.modules
-print(IN_COLAB)
 
+import logging
 logger = logging.getLogger(__name__)
 #logging.basicConfig(format="[%(filename)s:%(lineno)s %(funcName)s()] %(message)s")
 #logger.setLevel(logging.CRITICAL)
@@ -12,6 +9,10 @@ logger = logging.getLogger(__name__)
 #logger.setLevel(logging.WARNING)
 logger.setLevel(logging.INFO)
 #logger.setLevel(logging.DEBUG)
+
+import sys
+IN_COLAB = 'google.colab' in sys.modules
+logger.INFO(f"Running in Google Colab: {IN_COLAB}")
 
 def attenuate_background_img(
         prev_img,
@@ -82,7 +83,7 @@ def attenuate_background_seq(
             print(f"background ({background_img.dtype})")
             cv2_imshow(background_img)
 
-if __main__:
+if __name__ == "__main__":
     attenuate_background_seq(
         input_sequence_path="img_paper/Alicia/ImagesGRAYSCALE/",
         output_sequence_path="/tmp/",
