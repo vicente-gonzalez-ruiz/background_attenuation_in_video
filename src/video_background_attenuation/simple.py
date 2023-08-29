@@ -17,8 +17,7 @@ except:
     IN_COLAB = False
 #import sys
 #IN_COLAB = 'google.colab' in sys.modules
-if IN_COLAB:
-    logger.info(f"Running in Google Colab")
+logger.info(f"Running in Google Colab: [IN_COLAB]")
 
 def attenuate_background_img(
         prev_img,
