@@ -18,8 +18,6 @@ try:
     IN_COLAB = True
 except:
     IN_COLAB = False
-#import sys
-#IN_COLAB = 'google.colab' in sys.modules
 logger.info(f"Running in Google Colab: [IN_COLAB]")
 
 def attenuate_background_img(
@@ -59,8 +57,8 @@ def attenuate_background_img(
     return difference_img, background_img
 
 def attenuate_background_seq(
-        input_sequence_prefix='/tmp/input/',
-        output_sequence_prefix='/tmp/output/',
+        input_sequence_prefix="/tmp/input/",
+        output_sequence_prefix="/tmp/output/",
         img_extension=".jpg",
         first_img_index=0,
         last_img_index=120,

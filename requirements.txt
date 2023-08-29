@@ -1,2 +1,3 @@
 numpy
 opencv-python
+motion_estimation @ git+https://github.com/vicente-gonzalez-ruiz/motion_estimation@main#egg=motion_estimation
