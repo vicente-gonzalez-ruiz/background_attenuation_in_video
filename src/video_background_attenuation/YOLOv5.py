@@ -1,6 +1,8 @@
 '''Video background attenuation using YOLOv5 (https://github.com/vicente-gonzalez-ruiz/yolov5_no_bounding_boxes).
 '''
 
+# https://colab.research.google.com/drive/1XqAqfYMthcMk-tL9SBzfF-b9FPUc7G4J?usp=sharing
+
 import numpy as np
 import cv2
 import os
