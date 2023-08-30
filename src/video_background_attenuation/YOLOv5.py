@@ -29,18 +29,20 @@ def attenuate_background_seq(
         first_img_index=0,
         last_img_index=120):
 
-    os.system("rm -rf runs/predict-seg")
-    os.system(f"python segment/predict.py --save-crop --save-txt --weights yolov5x-seg.pt --source {input_sequence_prefix} --retina-masks --classes 0")
+    os.system("rm -rf yolov5/runs/predict-seg")
+    os.system(f"python yolov5/segment/predict.py --save-crop --save-txt --weights yolov5x-seg.pt --source {input_sequence_prefix} --retina-masks --classes 0")
     images_folder = "yolov5/runs/predict-seg/exp/"
-    list_of_imagenames = np.array([img for img in os.listdir(images_folder) if ".png" in img])
+    os.system("ls yolov5/runs/predict-seg/exp/")
+    list_of_imagenames = np.array([img for img in os.listdir(images_folder) if img_extension in img])
     counter = 0
+    print(list_of_imagenames)
     for image_name in list_of_imagenames:
         orig_img = cv2.imread(os.path.join(images_folder, image_name))
         zeros_img = np.zeros_like(orig_img).astype(np.uint8)
         masked_img = cv2.imread(os.path.join(images_folder, image_name))
         print(counter, image_name)
         zeroed_img = np.where(masked_img[...,0] != masked_img[...,2], orig_img[...,0], 0)
-        cv2.imwrite(os.path.join("/tmp", image_name), zeroed_img)
+        cv2.imwrite(os.path.join(output_sequence_prefix, image_name), zeroed_img)
         counter += 1
 
 if __name__ == "__main__":
@@ -82,8 +84,7 @@ if __name__ == "__main__":
     os.system("rm -rf yolov5")
     os.system("git clone https://github.com/vicente-gonzalez-ruiz/yolov5_no_bounding_boxes.git")
     os.system("mv yolov5_no_bounding_boxes yolov5")
-    os.system("cd yolov5")
-    os.system("pip install -r requirements.txt")
+    os.system("pip install -r yolov5/requirements.txt")
     
     attenuate_background_seq(
         input_sequence_prefix=args.input,
